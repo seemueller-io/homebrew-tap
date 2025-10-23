@@ -37,8 +37,14 @@ class MlxOmniServer < Formula
     ENV["PIP_NO_BINARY"] = "Pillow"
     ENV["PILLOW_USE_SYSTEM_LIBRARIES"] = "1"
 
-    # Install the package and its remaining dependencies into the venv
-    venv.pip_install_and_link buildpath
+    # Upgrade build tooling (helps with wheels and builds)
+    system libexec/"bin/pip", "install", "--upgrade", "pip", "setuptools", "wheel"
+
+    # Install the package with its dependencies into the venv
+    system libexec/"bin/pip", "install", buildpath
+
+    # Expose the entrypoint from the virtualenv
+    bin.install_symlink libexec/"bin/mlx-omni-server"
   end
 
   # Only allow installation on Apple Silicon Macs
