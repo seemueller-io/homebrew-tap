@@ -11,6 +11,10 @@ class MlxOmniServer < Formula
   license "MIT"
 
   depends_on "python@3.11"
+  # Build Pillow from source to avoid vendored .dylibs that fail relocation
+  depends_on "jpeg-turbo"
+  depends_on "libpng"
+  depends_on "freetype"
   depends_on :macos
 
   # This formula installs the following key dependencies from PyPI:
@@ -24,10 +28,15 @@ class MlxOmniServer < Formula
   # - mlx-embeddings: Text embeddings using MLX
 
   def install
-    # Install all dependencies from pyproject.toml
-    system "pip3", "install", "--prefix=#{libexec}", "."
-    bin.install Dir["#{libexec}/bin/*"]
-    bin.env_script_all_files(libexec/"bin", PATH: "#{libexec}/bin:$PATH", PYTHONPATH: "#{libexec}/lib/python3.11/site-packages")
+    # Create an isolated virtualenv
+    venv = virtualenv_create(libexec, "python3.11")
+
+    # Force Pillow to build from source so it links against Homebrew libs
+    # instead of bundling macOS .dylibs that Homebrew cannot relocate.
+    venv.pip_install ["--no-binary", "Pillow", "Pillow"]
+
+    # Install the package and its remaining dependencies into the venv
+    venv.pip_install_and_link buildpath
   end
 
   # Only allow installation on Apple Silicon Macs
