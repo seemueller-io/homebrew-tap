@@ -3,11 +3,11 @@ class MlxOmniServer < Formula
 
   desc "OpenAI-compatible API server powered by Apple's MLX framework"
   homepage "https://github.com/madroidmaq/mlx-omni-server"
-  url "https://github.com/madroidmaq/mlx-omni-server/archive/refs/tags/v0.4.3.tar.gz"
+  url "https://github.com/madroidmaq/mlx-omni-server/archive/refs/tags/v0.5.1.tar.gz"
   # To get the actual SHA256 hash, download the package and run:
-  # curl -L -o mlx-omni-server-0.4.3.tar.gz https://github.com/madroidmaq/mlx-omni-server/archive/refs/tags/v0.4.3.tar.gz
-  # shasum -a 256 mlx-omni-server-0.4.3.tar.gz
-  sha256 "8d39e28aa9249f102accfb8a9f09d44adf1ca2738b1338335cfd2622796a88b6"
+  # curl -L -o mlx-omni-server-0.5.1.tar.gz https://github.com/madroidmaq/mlx-omni-server/archive/refs/tags/v0.5.1.tar.gz
+  # shasum -a 256 mlx-omni-server-0.5.1.tar.gz
+  sha256 "a74f201457335613e47a5d50affee147f2393470dd377e0e5a53d1f4647ebe60"
   license "MIT"
 
   depends_on "python@3.11"
