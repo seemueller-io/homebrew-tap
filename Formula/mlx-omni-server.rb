@@ -5,17 +5,12 @@ class MlxOmniServer < Formula
   homepage "https://github.com/madroidmaq/mlx-omni-server"
   url "https://github.com/madroidmaq/mlx-omni-server/archive/refs/tags/v0.5.1.tar.gz"
   # To get the actual SHA256 hash, download the package and run:
-  # curl -L -o mlx-omni-server-0.5.1.tar.gz https://github.com/madroidmaq/mlx-omni-server/archive/refs/tags/v0.5.1.tar.gz
-  # shasum -a 256 mlx-omni-server-0.5.1.tar.gz
-  sha256 "a74f201457335613e47a5d50affee147f2393470dd377e0e5a53d1f4647ebe60"
+  # curl -L -o mlx-omni-server-0.4.3.tar.gz https://github.com/madroidmaq/mlx-omni-server/archive/refs/tags/v0.4.3.tar.gz
+  # shasum -a 256 mlx-omni-server-0.4.3.tar.gz
+  sha256 "8d39e28aa9249f102accfb8a9f09d44adf1ca2738b1338335cfd2622796a88b6"
   license "MIT"
 
-  depends_on "python@3.11"
-  depends_on "pkg-config" => :build
-  # Build Pillow from source to avoid vendored .dylibs that fail relocation
-  depends_on "jpeg-turbo"
-  depends_on "libpng"
-  depends_on "freetype"
+  depends_on "python@3.13"
   depends_on :macos
 
   # This formula installs the following key dependencies from PyPI:
@@ -29,22 +24,10 @@ class MlxOmniServer < Formula
   # - mlx-embeddings: Text embeddings using MLX
 
   def install
-    # Create an isolated virtualenv
-    venv = virtualenv_create(libexec, "python3.11")
-
-    # Force Pillow to build from source so it links against Homebrew libs
-    # instead of bundling macOS .dylibs that Homebrew cannot relocate.
-    ENV["PIP_NO_BINARY"] = "Pillow"
-    ENV["PILLOW_USE_SYSTEM_LIBRARIES"] = "1"
-
-    # Upgrade build tooling (helps with wheels and builds)
-    system libexec/"bin/pip", "install", "--upgrade", "pip", "setuptools", "wheel"
-
-    # Install the package with its dependencies into the venv
-    system libexec/"bin/pip", "install", buildpath
-
-    # Expose the entrypoint from the virtualenv
-    bin.install_symlink libexec/"bin/mlx-omni-server"
+    # Install all dependencies from pyproject.toml
+    system "pip3", "install", "--prefix=#{libexec}", "."
+    bin.install Dir["#{libexec}/bin/*"]
+    bin.env_script_all_files(libexec/"bin", PATH: "#{libexec}/bin:$PATH", PYTHONPATH: "#{libexec}/lib/python3.13/site-packages")
   end
 
   # Only allow installation on Apple Silicon Macs
